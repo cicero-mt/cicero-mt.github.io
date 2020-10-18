@@ -1,0 +1,1398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="./guide.xsl" type="text/xsl" ?>
+
+<guide>
+
+<title> Introduction </title>
+
+<para> Ce document, qui énumère les recommandations de codage relatives au langage C++ communément admises dans la communauté de développement, s'inspire de [<a href="#references">0</a>], dont la traduction et l'adaptation a été faite par :
+
+   <ul>
+    <li>Louis Granger</li>
+    <li>Martin Bisson</li>
+    <li>Noureddine Kerzazi</li>
+    <li>Michel Gagnon</li>
+    <li>François-R Boyer</li>
+  </ul> 
+
+
+<!-- Pour tout commentaire ou suggestion, communiquez avec <a href="mailto:michel.gagnon@polymtl.ca"> Michel Gagnon</a>. -->
+
+</para>
+
+
+<para>Il y a plusieurs raisons qui font la nécessité de normaliser la façon de rédiger du code :</para>
+
+<para>
+
+  <ul>
+    <li>Augmenter la lisibilité et la compréhension du code source.</li>
+    <li>Code prédictible et facilement modifiable. </li>
+  </ul>
+</para>
+
+<subtitle> Disposition des recommandations </subtitle> 
+
+<para>Les recommandations sont groupées par matière et chaque recommandation est numérotée pour lui faciliter l'accès pendant les mises à jour. La disposition pour les recommandations est comme suit </para>
+
+<ex_consigne montrer="ok" niveau="1">
+<description>Brève description de la recommandation</description>
+<exemple>
+	Un exemple de code, s'il y a lieu
+</exemple>
+<para>Motivations, contexte et informations additionnelle</para>
+</ex_consigne>
+
+
+<subtitle> Importance des recommandations </subtitle> 
+
+<para>Les directives qui se retrouvent dans ce document n'ont pas toutes la même importance. Certaines doivent être respectées, alors que d'autres sont plutôt souhaitables. </para>
+
+
+
+<title> Recommandations générales</title>
+
+<consigne montrer="ok" niveau="1">
+<description>On permet n'importe quelle violation du guide si elle augmente la lisibilité.</description>
+<para>Le but principal de la recommandation est d'améliorer la lisibilité et de ce fait l'organisation et la qualité générale du code. Il est impossible de couvrir tous les cas spécifiques d'un guide général et le programmeur doit être flexible.</para>
+<para>Le lecteur est invité à faire montre de jugement. Si une pratique est inutile, inapplicable, voire contre-productive au regard des contraintes d'un projet ou des objectifs corporatifs, soyons assez intelligents pour y déroger.</para>
+</consigne>
+
+
+<title> Conventions de nomenclature</title>
+
+<subtitle> Conventions générales de nomenclature</subtitle>
+
+
+
+<consigne montrer="ok" niveau="1">
+<description>Le nom des nouveaux types (<code>enum/typedef/struct/class</code>) doit être en minuscules avec le premier caractère en majuscule, ainsi que le début de chaque nouveau mot. </description>
+
+<exemple>
+	Ligne, SystemeAudio, PointDeControle 
+</exemple>
+<para>Cette façon d'écrire est communément appelée <a href="http://fr.wikipedia.org/wiki/CamelCase">UpperCamelCase</a>. C'est une pratique courante de la communauté des développeurs C++. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le nom des variables et constantes doit commencer par une lettre minuscule, être écrit en minuscules, mais comporte une majuscule à chaque changement de mot.</description>
+<exemple>
+	ligne, application, compteur, compteurDeLigne
+</exemple>
+<para>Cette façon d'écrire est communément appelée <a href="http://fr.wikipedia.org/wiki/CamelCase">lowerCamelCase</a>. Une des conventions de la communauté des programmeurs C++ est l'utilisation du même nom que celui de la classe avec la première lettre en minuscule pour une variable - instance d'objet - lorsque celle-ci n'a pas une caractéristique importante qui devrait être dans son nom. Ceci permet d'avoir une idée du type de la variable. </para>
+<exemple>
+	Point point;
+	Point centreDuCercle;
+	static const double pi = 3.141592653589793238;
+</exemple>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Le nom des #define doit être en majuscules avec une séparation par le caractère souligné « <tt>_</tt> »  entre chaque mot. Traditionnellement, les constantes utilisaient des #define, mais ça ne devrait plus être le cas en C++ moderne (vous verrez certainement beaucoup de programmes qui utilisent encore de noms de constantes en majuscules, incluant certains exemples du cours INF1005C).</description>
+<exemple>
+	#define DEBUG true
+</exemple>
+<para>C'est une convention de la communauté des développeurs C++. <!-- La meilleure façon de faire est d'implémenter les constantes comme des méthodes qui retournent une valeur. --></para>
+<!--<exemple>
+   //Méthode qui retourne la constante vitesse maximale
+   //Ceci peut remplacer public final static int VITESSE_MAXIMALE = 25 ;
+
+   int obtenirVitesseMaximale()
+   {
+      return 25;
+   }
+</exemple>
+<para>Cette forme est beaucoup plus lisible et compréhensible.</para>-->
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le nom des <!--méthodes-->fonctions doit être un verbe commençant par un caractère minuscule. À chaque changement de mot, on commence par une majuscule.</description>
+<exemple>
+	getName(), obtenirInstance(), lireNom(), calculerLargeurTotale()
+</exemple>
+<para>C'est une pratique courante dans la communauté des développeurs C++.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>Le nom des espaces de nommage (namespace) devrait être en minuscules.</description>
+<exemple>
+	model::analyzer, io::iomanager, common::math::geometry 
+</exemple>
+<para>Pratique courante dans la communauté des développeurs C++.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les types génériques devrait être représentés par une simple lettre majuscule. </description>
+<exemple>
+	template&lt;typename T&gt; 
+	... 
+	template&lt;typename C, class D&gt;
+	... 
+</exemple>
+<para>Pratique courante dans la communauté des développeurs C++.  Ainsi, les noms génériques se distinguent des autres noms utilisés. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>On devrait utiliser le mot <code>typename</code> plutôt que <code>class</code> dans la déclaration d'un type générique. </description>
+<exemple>
+	template&lt;typename T&gt; // À ÉVITER: template&lt;class T&gt;
+</exemple>
+<para>Comme le type générique peut être instancié autant par une classe que par un type primitif, on évite ainsi une confusion. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les acronymes doivent être en minuscules quand ils sont utilisés comme nom de variable. </description>
+<exemple>
+	exportHtmlSource();    // À ÉVITER: exportHTMLSource(); 
+	openDvdPlayer();       // À ÉVITER: openDVDPlayer(); 
+	ouvrirLecteurDvd();    // À ÉVITER: ouvrirLecteurDVD();  
+</exemple>
+<para>L'utilisation des majuscules pour les noms propres viole la règle précédente et diminue la lisibilité du code source.  Un autre problème est illustré par les exemples ci-haut : lorsque le nom est concaténé à un autre, la lisibilité est réduite de beaucoup si on met l'abréviation entièrement en majuscules, car le nom qui suit l'abréviation ne ressort pas comme il le devrait.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>On devrait toujours référer aux variables globales en utilisant l'opérateur ::. 
+</description>
+<exemple>
+	::fenetrePrincipale.ouvrir();
+	::uneVariableGlobale = 8;
+</exemple>
+<para>Malgré cette règle, en général, <b>l'utilisation des variables globales devrait être évitée</b>.  On doit plutôt utiliser des singletons. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les variables privées d'une classe doivent se terminer par un caractère souligné "_".</description>
+<exemple>
+	class UneClasse 
+	{ 
+	private: 
+		int longueur_; 
+	} 
+</exemple>
+<para>À l'exception de son nom et de son type, la portée (scope) d'une variable est sa caractéristique la plus importante.  Le fait d'indiquer une portée de classe en utilisant le caractère souligné facilite la distinction entre les variables membres de la classe et les variables locales.  Cela est important, car les membres d'une classe ont généralement une signification plus importante que les variables locales et doivent donc être traitées avec plus d'attention par le programmeur.</para>
+<para>Un effet secondaire de cette convention est qu'elle règle élégamment le problème de trouver un nom raisonnable pour les noms des paramètres des constructeurs et des méthodes servant à modifier la valeur d'un attribut :</para>
+<exemple>
+	void setDepth(int depth)
+	{
+		depth_ = depth;
+	}
+</exemple>
+
+<para>On se demande parfois si le caractère souligné devrait être ajouté comme préfixe ou comme suffixe.  Les deux pratiques sont utilisées couramment, mais le suffixe est recommandé, car il préserve davantage la lisibilité du nom.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>Une variable générique doit avoir le même nom que son type.</description>
+<exemple>
+	void setTopic(Topic topic)  // À ÉVITER: void setTopic(Topic value)
+	                            // À ÉVITER: void setTopic(Topic aTopic)
+	                            // À ÉVITER: void setTopic(Topic t)
+	void connect(Database database) // À ÉVITER: void connect(Database db)
+	                                // À ÉVITER: void connect(Database oracleDB)
+</exemple>
+<para>Réduit la complexité par la réduction des différents noms utilisés. Aussi, on déduit facilement le type de la variable, à la simple lecture de son nom.</para>
+<para>Si vous ne pouvez respecter cette clause, vous avez probablement mal choisi le nom de votre type.</para>
+<para>Les variables non génériques ont un rôle. Ces variables peuvent être nommées en combinant le rôle et le type.</para>
+<exemple>
+	Point  pointDepart, pointCentre;
+	Nom    nomUsager;
+</exemple>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les noms doivent être tous en anglais ou tous en français. </description>
+<para>Même si l'anglais est la langue préférée des développeurs, la langue française reste un bon choix. Cependant, nous ne recommandons pas les programmes bilingues.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables qui ont une longue portée peuvent avoir des noms longs. Ceux avec une portée réduite peuvent avoir des noms courts. 
+</description>
+<para>Les variables employées pour un stockage de données temporaires ou pour l'utilisation des indices doivent avoir un nom court. Un programmeur lisant une telle variable devrait être capable de supposer que sa valeur n'est pas employée au delà de ces lignes de code. Les variables temporaires  pour des entiers sont <i>i, j, k, m, n</i> (mais jamais <i>l</i>, qui pourrait être confondu avec le chiffre un) et pour des caractères <i>c</i> et <i>d</i>.  </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Le nom de la classe des objets est implicite et ne devrait pas figurer dans le nom des méthodes.  
+</description>
+<exemple>
+	line.getLength();        // À ÉVITER: line.getLineLength(); 
+	ligne.lireLongueur();    // À ÉVITER: ligne.lireLongueurLigne(); 
+</exemple>
+<para>Comme on peut le voir dans l'exemple, la présence du nom de la classe devient redondante avec le nom de l'objet.   </para>
+</consigne>
+
+
+
+
+<subtitle>Nomenclature spécifique</subtitle>
+
+<consigne montrer="ok" niveau="2">
+<description>Les termes « obtenir »/« modifier » ou « lire »/« ecrire » doivent être employés là où un attribut est accessible directement.  </description>
+<exemple>
+	employe.obtenirNom(); 
+	employe.modifierNom(nom); 
+	matrice.obtenirElement(2, 4); 
+	matrice.modifierElement(2, 4, valeur); 
+</exemple>
+<para>Pratique courante dans la communauté des développeurs C++. L'équivalent anglophone est « set » et « get ».</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le terme « calculer » (« compute » en anglais) peut être employé dans des méthodes où quelque chose est calculé.  </description>
+<exemple>
+	ensembleValeurs.calculerMoyenne(); 
+	matrice.calculerlnverse();
+</exemple>
+<para>Donne au lecteur un indice immédiat que cette opération consomme potentiellement du temps, et si employée souvent, il pourrait utiliser le cache du résultat. L'emploi conséquent du terme améliore la lisibilité.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le terme « trouver » (« find » en anglais) devrait être employé dans des méthodes où on effectue une recherche.   </description>
+<exemple>
+	sommet.trouverSommetVoisin(); 
+	matrice.trouverPetitElement(); 
+	noeud.trouverCourtChemin(noeudDestination); 
+</exemple>
+<para>Fournit au lecteur un indice immédiat qu'il s'agit d'une méthode de recherche avec un minimum de calcul. L'emploi conséquent du terme améliore la lisibilité. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Le terme « initialiser » (« initialize » en anglais) peut être employé pour désigner une méthode qui sert à initialiser l'état d'un objet.</description>
+<exemple>
+	imprimante.initialiserStyle(); 
+</exemple>
+<para>L'abréviation <code>init</code> devrait être évitée.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les variables représentant des composantes de l'interface usager (GUI) devraient être suffixées par le type d'élément en anglais. En français elles devraient être préfixées. </description>
+<exemple>
+	mainWindow, propertiesDialog, widthScale, loginText, leftScrollbar, mainForm, 
+	fileMenu, minLabel, exitButton, yesToggle etc. 
+	fenetrePrincipale, dialoguePropriete, echelleLargeur, texteLogin, 
+	barreDefilementGauche, formulairePrincipal, menuFichier, labelMin, boutonSortie, 
+	toucheBasculeOui etc.
+</exemple>
+<para>Améliore la lisibilité puisqu'à partir du nom, l'utilisateur a une indication immédiate sur le type de la variable et les ressources disponibles de l'objet. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>La forme plurielle devrait être employée pour les noms représentant une collection d'objets.  </description>
+<exemple>
+	vector&lt;Point&gt; points;
+	int valeurs[]; 
+</exemple>
+<para>Améliore la lisibilité puisqu'à partir du nom, l'utilisateur a une indication immédiate sur le type de la variable et les opérations qui peuvent être exécutées sur ses éléments.  </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Le préfixe « n » devrait être employé pour des variables représentant un nombre d'objets.  </description>
+<exemple>
+	nPoints, nLignes
+</exemple>
+<para>La notation est empruntée au monde des mathématiques où il existe une convention établie pour indiquer un nombre d'objets.   </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le préfixe <i>no</i> (ou le suffixe <i>No</i> en anglais) devrait être utilisé pour les variables représentant un numéro d'entité. 
+</description>
+<exemple>
+	EmployeeNo
+	noEmploye
+</exemple>
+<para>La notation est empruntée au monde des mathématiques où il existe une convention établie pour indiquer un nombre d'entité.  </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables d'itération devraient être appelées i, j, k etc. (mais jamais l)  </description>
+<exemple>
+	for (int i = 0; i &lt; nTables; i++) { 
+		... 
+	} 
+
+	for (vector&lt;MyClass&gt;::iterator i = list.begin(); i != list.end(); i++) { 
+		Element&amp; element = *i;
+		... 
+	}
+</exemple>
+<para>La notation est empruntée au monde des mathématiques où il existe une convention établie pour indiquer les itérateurs. 
+Les variables nommées <i>j</i>, <i>k</i>, etc., devraient être employées pour des boucles imbriquées seulement.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le préfixe « is » en anglais ou « est » en français devrait être employé pour les méthodes et variables booléennes.  
+</description>
+<exemple>
+	estVisible, estActif, estTrouve, estOuvert
+	isVisible, isActive, isFound, isOpen 
+</exemple>
+<para>L'utilisation du préfixe « est » résout un problème commun du mauvais choix du nom de la variable booléenne comme 'ETAT' ou 'INDICATEUR'. L'utilisation de « estEtat » ou « estIndicateur » simplement n'est pas suffisante, le programmeur est forcé de choisir des noms plus significatifs.  L'équivalent anglophone est « is ».</para>
+<para>Il existe des alternatives au préfixe « est » qui sont appropriées dans certaines situations. Ce sont les préfixes « a » (« has »), « peut » (« can ») et « doit » (« must ») :</para>
+<exemple>
+	bool aLicense();
+	bool peutEvaluer();
+	bool doitQuitter = false;
+</exemple>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Des noms complémentaires doivent être utilisés pour des entités (fonctions, variables, etc.) complémentaires [1]. </description>
+<para>En anglais : get/set, add/remove, create/destroy, start/stop, insert/delete, increment/decrement, old/new, begin/end, first/last, up/down, min/max, next/previous, open/close, show/hide, suspend/resume, etc. </para>
+<para>En français : obtenir/modifier, ajouter/retirer, creer/detruire, demarrer/arreter, incrementer/decrementer, ancien/nouveau, debut/fin, premier/dernier, haut/bas, min/max, prochain/precedent, ouvrir/fermer, etc.</para>
+
+<para>Réduit la complexité par la symétrie des noms de ces entités.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Les abréviations devraient être évitées dans les noms.</description>
+<exemple>
+	calculerMoyenne();   // À ÉVITER: calcMoy();
+</exemple>
+<para>Il y a deux types de mots à considérer.  Tout d'abord, les mots relativement communs, généralement énumérés dans un dictionnaire non technique, ne doivent jamais être abréviés.  Évitez d'écrire :
+
+
+<ul>
+<li><tt>cmd </tt>  à la place de   <tt>commande</tt></li>
+<li><tt>calc</tt>  à la place de   <tt>calculer</tt></li>
+<li><tt>cp  </tt>  à la place de   <tt>copie</tt></li>
+<li><tt>e   </tt>  à la place de   <tt>exception</tt></li>
+<li><tt>init</tt>  à la place de   <tt>initialiser</tt></li>
+<li><tt>pt  </tt>  à la place de   <tt>point</tt></li>
+<li>etc.</li> 
+</ul>
+</para>
+
+<para>De plus, certains termes, parfois spécifiques à un domaine particulier, sont davantage connus sous leur forme abrégée ou par leur acronyme.  On devrait garder ces derniers sous leur forme courte.  Ne jamais écrire :
+<ul>
+<li><tt>HypertextMarkupLanguage</tt>  à la place de   <tt>html</tt></li>
+<li><tt>CentralProcessingUnit  </tt>  à la place de   <tt>cpu</tt></li>
+<li><tt>ProduitInterieurBrut   </tt>  à la place de   <tt>pib</tt></li>
+<li>etc.</li> 
+</ul>
+</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>On doit éviter d'ajouter des préfixes (ou suffixes)  comme <tt>p</tt> ou <tt>ptr</tt> aux pointeurs. </description>
+<exemple>
+	Ligne* ligne; // À ÉVITER: Ligne* pLigne;
+	              // À ÉVITER: Ligne* lignePtr; 
+</exemple>
+<para>Une convention de nomenclature spécifique au pointeur est presque impossible à suivre, car de nombreuses variables sont des pointeurs dans un environnement C/C++.  De plus, les objets en C++ sont souvent des types opaques dont l'implantation spécifique devrait être inconnue du programmeur.  Le nom devrait dénoter le type seulement lorsque ce dernier a une signification spéciale. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>La négation des noms des variables booléennes doit être évitée.</description>
+<exemple>
+	bool estNonErreur;  // À ÉVITER
+	bool estNonTrouve;  // À ÉVITER
+</exemple>
+<para>Le problème survient quand on utilise l'opérateur de négation. Il en résulte une double négation plus difficile à comprendre, par exemple <tt>!estNonErreur</tt>. Il est beaucoup plus clair d'utiliser une variable booléenne comme <tt>estErreur</tt> et d'utiliser l'expression <tt>!estErreur</tt>, ou de trouver un autre nom comme <tt>estValide</tt>, au lieu d'une variable booléenne <tt>estNonErreur</tt>.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les constantes d'énumération devraient être préfixées par un nom commun de type.  </description>
+<exemple>
+	enum Color { COLOR_RED, COLOR_GREEN, COLOR_BLUE }; 
+	enum Couleur { COULEUR_ROUGE, COULEUR_VERT, COULEUR_BLEU };
+</exemple>
+<para>Cela donne de l'information supplémentaire sur l'endroit où se trouve la déclaration, sur le lien entre des constantes et sur le concept que les constantes représentent.
+</para>
+<para>Une approche alternative est de toujours référer aux constantes par leur type :</para>
+<exemple>
+	Color::RED, Airline::AIR_FRANCE 
+	Couleur::ROUGE, LigneAerienne::AIR_CANADA  
+</exemple>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les classes d'exception devraient avoir « Exception » comme suffixe en anglais et comme préfixe en français.</description>
+<exemple>
+	class AccessException
+	{
+		...
+	};
+
+	class ExceptionAcces
+	{
+		...
+	};
+</exemple>
+<para>Les classes d'exception ne font pas réellement partie du modèle principal du programme, et le fait de les nommer ainsi les isole des autres classes</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description> Les fonctions (méthodes retournant quelque chose) devraient être nommées d'après ce qu'elles retournent et les procédures (méthodes ne retournant rien, c'est-à-dire void) d'après ce qu'elles font.</description>
+
+<para> Améliore la lisibilité. Clarifie ce que la méthode devrait faire et également ce qu'elle n'est pas supposée faire, ce qui permet d'éviter plus facilement les effets secondaires non souhaités. </para>
+</consigne>
+
+
+<subtitle>Les fichiers</subtitle>
+
+<subsubtitle>Fichiers sources</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>Un fichier source  doit toujours comporter un entête de programme.</description>
+<exemple>
+/**
+* Programme qui détermine si une année lue du clavier est bissextile.
+* \file   bissextile.cpp
+* \author Dupont et Durant
+* \date   22 janvier 2009
+* Créé le 16 janvier 2008
+*/
+</exemple>
+<para>L'entête  se compose  d'une série de commentaires   qui décrivent le programme.  Ces commentaires comportent toujours les informations suivantes : une brève description, le nom de fichier, le nom des auteurs, la date de mise à jour et la date de création.  (L'entête en exemple suit le format Doxygen [5].)
+</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les fichiers source peuvent avoir l'extension .cpp (recommandé), .c++, .cc, .cxx, ou .C (non recommandé).  Les fichiers d'entête C++ devraient avoir une extension qui suit celle utilisée pour le fichier source, soit .hpp (recommandé), .h++, .hh, .hxx, ou .h (deuxième recommandation).  </description>
+<exemple>
+	MaClasse.cpp, MaClasse.hpp
+</exemple>
+<para>L'extension .cpp est une des plus utilisées.  L'extension .h est généralement plus utilisée que .hpp, mais elle ne permet pas facilement de savoir que l'entête est C++.</para>
+</consigne>
+
+
+
+<consigne montrer="ok" niveau="2">
+<description>Une classe devrait être déclarée dans un fichier d'entête et définie dans un fichier source.  Le nom des fichiers devrait correspondre au nom de la classe. </description>
+<exemple>
+	MaClasse.h, MaClasse.c++ 
+</exemple>
+<para>Facilite le repérage des fichiers associés à une classe donnée.  Une exception évidente à cette règle sont les classes génériques (« template ») qui doivent être déclarées et définies dans un fichier .h.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>Toutes les définitions devraient se trouver dans les fichiers source (.cpp). </description>
+<exemple>
+	class MaClasse
+	{
+	public:
+		int getValue () {return value_;} // À ÉVITER! 
+		...
+	private:
+		int value_;
+	} 
+</exemple>
+<para>Les fichiers d'entête devraient déclarer une interface et les fichiers source devraient l'implanter.  Un programmeur devrait toujours savoir qu'une implantation qu'il cherche se trouve dans le fichier source. Évidemment, pour les fonctions inline, on ne peut pas suivre cette directive, puisqu'elles doivent nécessairement apparaître dans le fichier .h.  </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Le contenu d'un fichier ne doit pas dépasser 80 colonnes. </description>
+<para>Ce nombre de colonnes est très commun pour les différents éditeurs, émulateurs de terminal, imprimantes et débogueurs.  Ainsi, les fichiers partagés entre différents développeurs devraient respecter cette contrainte.  Cela évite la perte de lisibilité qui peut se produire lorsque des retours de chariot non intentionnels se produisent sur les lignes trop longues quand un fichier passe d'un programmeur à l'autre. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="99">
+<description>Les caractères spéciaux comme « TAB » et le saut de page (« page break ») doivent être évités. </description>
+<para>Ces caractères risquent de causer des inconsistances entre les éditeurs, imprimantes, émulateurs de terminal ou débogueurs s'ils sont utilisés dans un environnement multi-programmeur et multi-plateforme. </para>
+
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>La césure des lignes trop longues doit être effectuée d'une manière lisible, logique et évidente [1]. </description>
+<exemple>
+	somme = uneVariableDontLeNomEstTresLong
+	        + uneDeuxiemeVariableDontLeNomEstTresLong
+	        + uneDerniereVariableDontLeNomEstTresLong;
+
+	unObjetQuelconque.uneMethode(unPremierParametre, unAutreParametre,
+	                             unDernierParametre);
+
+	unObjetQuelconque.uneMethodeDontLeNomEstPlutotLong(unPremiereParametre, 
+	                                                   unAutreParametre,
+	                                                   unDernierParametre);
+
+	setText("Ligne tres tres tres tres tres tres tres tres tres tres longue coupee"
+	        " en deux parties.");
+
+	if ( unObjetQuelconque.obtenirUnDeSesComposants().estActif()
+	     || unAutreObjet.obtenirUnDeSesComposants().estActif() )
+		...
+</exemple>
+<para>Les lignes coupées se produisent lorsqu'un énoncé dépasse la limite mentionnée plus haut de 80 colonnes.  Il est difficile de donner des règles strictes sur la manière de couper les lignes, mais les exemples ci-dessus reflètent l'idée générale.  L'important est de se rappeler qu'un des buts principaux est d'augmenter la lisibilité. En général :
+
+<ul>
+<li>Couper après une virgule. </li>
+<li>Couper avant ou après un opérateur.  </li>
+<li>Aligner la nouvelle ligne avec le début de l'expression de la ligne précédente.  </li>
+</ul></para>
+</consigne>
+
+
+<subsubtitle>Fichiers d'entête et énoncés d'inclusion</subsubtitle>
+
+<consigne montrer="ok" niveau="2">
+<description>Les fichiers d'entête doivent contenir une garde d'inclusion multiple. </description>
+<exemple>
+	#ifndef NOMCLASSE_H
+	#define NOMCLASSE_H
+
+	...
+
+	#endif 
+</exemple>
+<para>Le but de cette construction est d'éviter les erreurs de compilation.  La convention pour le nom à définir reflète l'endroit où se trouve le fichier dans l'arbre de source et prévient les conflits de noms. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les énoncés d'inclusion devraient être ordonnés (par leur position hiérarchique dans le système, avec les fichiers de bas niveau inclus en premier) et groupés.  On laisse une ligne vide entre les groupes d'énoncés. </description>
+<exemple>
+	#include &lt;fstream&gt;
+	#include &lt;iomanip&gt;
+
+	#include &lt;qt/qbutton.h&gt;
+	#include &lt;qt/qtextfield.h&gt;
+
+	#include "com/company/ui/PropertiesDialog.h"
+	#include "com/company/ui/MainWindow.h" 
+</exemple>
+<para>En plus de montrer au lecteur les fichiers d'inclusion, cette norme donne une indication immédiate à propos des modules impliqués.</para>
+<para>Les chemins indiquant l'endroit où se trouvent les fichiers d'inclusion ne doivent jamais être absolus.  On doit plutôt utiliser des directives spécifiques au compilateur utilisé pour indiquer les répertoires de base des inclusions.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Les énoncés d'inclusion doivent se trouver seulement au début d'un fichier. </description>
+<para>Pratique courante.  Évite les effets non désirés causés par des énoncés d'inclusions « cachés » profondément dans un fichier source. </para>
+</consigne>
+
+
+<subtitle>Les déclarations</subtitle>
+
+
+<subsubtitle>Types</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>Les types qui sont locaux à un seul fichier devraient être déclarés à l'intérieur de ce fichier. </description>
+<para>Impose la dissimulation d'information. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les parties d'une classe doivent être ordonnées de la manière suivante : <code>public</code>, <code>protected</code> et <code>private</code> [2][3]. Chaque section doit être identifiée explicitement.  Les sections non applicables ne doivent pas être mentionnées. </description>
+
+<para> En général, lorsqu'on utilise une classe qui a été développée par d'autres, on a un point de vue d'utilisateur. Ce qui nous intéresse est l'ensemble des méthodes que l'on peut utiliser avec les objets de cette classe. D'où l'intérêt de fournir en premier les éléments publics. Un peu moins fréquemment, on est appelé à définir des sous-classes pour étendre les fonctionnalités d'une classe déja fournie, ce qui requiert alors un accès aux éléments protégés. Finalement, comme les éléments privés ne concernent que les développeurs de la classe, ce qui représente généralement un nombre plus restreint de personnes, il est logique de les mettre en dernier.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>La conversion des types doit toujours être faite de façon explicite, on ne doit jamais dépendre de la conversion implicite.</description>
+<exemple>
+	floatValeur = static_cast&lt;float&gt;(intValeur);  // À ÉVITER: floatValeur = intValeur; 
+</exemple>
+<para>Ainsi, le programmeur indique qu'il est conscient de la différence entre les types impliqués et que l'utilisation mixte est intentionnelle.</para>
+</consigne>
+
+
+<subsubtitle>Variables</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables devraient être initialisées lorsqu'elles sont déclarées</description>
+<para>Cela permet d'être certain que les variables sont correctes en tout temps.</para>
+
+<exemple>
+	int x = 0;
+	double y = 0.0;
+	char c = '\0';
+	bool b = false;
+	// À ÉVITER: int x; double y; char c;
+</exemple>
+
+<para>Parfois, il est impossible d'initialiser une variable à sa déclaration. Dans ces cas, la variable devrait être laissée non initialisée plutôt que de l'initialiser à une valeur qui n'a pas de signification.</para>
+<para>C++11 : l'initialisation à la valeur par défaut avec la nouvelle syntaxe devrait être utilisée uniquement lorsque nécessaire.</para>
+<exemple>
+	double y = 0.0;  // À ÉVITER: double y{};
+</exemple>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables ne doivent jamais avoir plus d'une signification. </description>
+<para>Améliore la lisibilité en représentant chacun des concepts distinctement.  Réduit également les probabilités d'erreurs causées par des effets secondaires du traitement sur l'ancienne signification de la variable.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>L'utilisation de variables globales doit être évitée. </description>
+<para>En C++, il n'y a pas de raison d'utiliser une variable globale.</para>
+</consigne>
+
+<consigne montrer="non" niveau="2"><!-- devrait être affiché au niveau 2; est enlevé ici pour garder les même numéros de recommandations qu'avant -->
+<description>L'utilisation de fonctions globales devrait être minimisée. </description>
+<para>En C++, il est toujours préférable d'utiliser des méthodes de classes. Ce n'est que dans certains cas exceptionnels, comme par exemple la surchage de certains opérateurs, qu'on ne pourra pas éviter l'utilisation de fonctions globales. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>Les variables membres de classes ne devraient jamais être déclarées publiques. </description>
+<para>Le concept d'encapsulation est brisé par les variables publiques.  Il est préférable d'utiliser des variables privées et des fonctions d'accès.  Une classe qui est essentiellement une simple structure de données, sans comportement (l'équivalent d'une <code>struct</code> en C), pourrait être une exception à cette règle.  Dans ce cas, il est approprié de mettre publiques les variables membres de la classe[2].</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les pointeurs et références C++ devraient avoir leur symbole près du type plutôt que du nom.</description>
+<exemple>
+	float* x = nullptr;  // À ÉVITER: float *x = nullptr;
+	int&amp; y = z;          // À ÉVITER: int &amp;y = z; 
+</exemple>
+<para>La qualité de pointeur ou de référence d'une variable est une propriété du type plutôt que du nom.  Les programmeurs C utilisent souvent l'approche alternative, tandis qu'en C++, il est plus courant de suivre cette recommandation. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Le test implicite de comparaison avec 0 ne devrait être utilisé. </description>
+<exemple>
+	if (nLignes != 0)  // À ÉVITER: if (nLignes) 
+
+	if (valeur != 0.0) // À ÉVITER: if (valeur) 
+</exemple>
+<para>L'utilisation du test explicite est plus claire et donne une indication immédiate sur le type testé.</para>
+<para>En particulier, on ne doit pas utiliser le test implicite pour les pointeurs. Il faut donc plutôt utiliser :</para>
+<exemple>
+	Ligne* ligne;
+	...
+	if (ligne != nullptr)
+		...
+</exemple>
+<para>plutôt que</para>
+<exemple>
+	Ligne* ligne;
+	...
+	if (ligne)
+		...
+</exemple>
+
+<para>Le cas des variables booléennes est une exception à cette règle. Dans ce cas, il est tout à fait acceptable, et même préférable, de faire un test implicite, puisque le test est lui-même une expression booléenne : </para>
+
+<exemple>
+	bool estActif = false;
+	...
+	if (estActif)
+		...
+</exemple>
+
+
+
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables devraient être gardées vivantes le moins longtemps possible. </description>
+<para>Il est plus facile de contrôler les effets directs et les effets secondaires d'une variable si on garde les opérations sur cette dernière à l'intérieur d'une petite portée. En pratique, on essaie de limiter la portée d'une variable en la déclarant dans le bloc où elle est utilisée :</para>
+<exemple>
+	// RECOMMANDÉ;
+	...
+	for (int i = 0; i &lt; 100; i++)
+		...
+
+	// À ÉVITER:
+	...
+	int i;
+	...
+	for (i = 0; i &lt; 100; i++)
+		...
+
+
+	// RECOMMANDÉ;
+	...
+	bool estActif = true;
+	while (estActif) {
+		...
+		int uneVariable = 0;  // Cette variable n'est pas utilisée en dehors du while
+		...
+	}
+</exemple>
+
+</consigne>
+
+<subsubtitle>Boucles</subsubtitle>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Seuls les énoncés de contrôle de boucle doivent être inclus dans la construction <code>for()</code>. </description>
+<exemple>
+	somme = 0;           // À ÉVITER: for (i = 0, somme = 0; i &lt; 100; i++) 
+	for (int i = 0; i &lt; 100; i++) 
+		somme += valeur[i]; 
+</exemple>
+<para>Augmente la maintenabilité et la lisibilité.  Distingue clairement ce qui contrôle la boucle et ce qui est contenu dans la boucle. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables de boucle devraient être initialisées immédiatement avant la boucle. 
+</description>
+<exemple>
+	estFini = false;      // À ÉVITER: bool estFini = false; 
+	while (!estFini) {    // ... 
+		...               // while (!estFini) {
+	}                     //     ... 
+	                      // } 
+</exemple>
+</consigne>
+
+<consigne montrer="ok" niveau="99">
+<description>L'utilisation de boucles  <code>do-while</code> peut être évitée. </description>
+<para>Les boucles <code>do-while</code> sont moins lisibles que les boucles <code>while</code> et les boucles <code>for</code>, car la condition est située au bas de la boucle.  Le lecteur doit lire la boucle en entier pour comprendre la portée de la boucle.</para>
+<para>De plus, les boucles <code>do-while</code> ne sont pas nécessaires.  N'importe quelle boucle <code>do-while</code> peut facilement être réécrite en une boucle <code>while</code> ou une boucle <code>for</code>.  Réduire le nombre de constructions différentes améliore la lisibilité. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>L'utilisation de <code>break</code> et <code>continue</code> dans les boucles devrait être évitée. </description>
+
+<para>Ces énoncés devraient seulement être utilisés s'ils augmentent la lisibilité par rapport à leurs équivalents structurés. Le cas typique où on serait tenté d'utiliser ces instructions est celui où une situation exceptionnelle se produit à l'intérieur d'une boucle. Supposons par exemple qu'une méthode peut échouer :</para>
+
+<exemple>
+	for (iterateur = unConteneur.begin(); iterateur != unConteneur.end(); ++iterateur) {
+		...
+		if (unObjet.uneMethode() == false)
+			break;
+		...
+	}
+</exemple>
+
+<para>Avant d'utiliser un <tt>break</tt> dans une telle situation, il faut d'abord se demander s'il n'est pas plus approprié de lancer une exception. </para>
+
+<para>Il y a par contre un cas où le <tt>break</tt> s'impose. Il s'agit de la boucle inconditionnelle :</para>
+
+<exemple>
+	while (true) {
+		...
+		if (estTermine)
+			break;
+		...
+	}
+</exemple>
+
+
+
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>La forme <code>while (true)</code> devrait être utilisée pour les boucles inconditionnelle (parfois appelées "infinies", même si elles ne le sont pas). </description>
+<exemple>
+	while (true) {
+		...
+	}
+
+	for (;;) { // À ÉVITER!
+		...
+	}
+
+	while (1) { // À ÉVITER!
+		...
+	} 
+</exemple>
+<para>Tester par rapport à 1 n'est ni nécessaire ni significatif.  La forme  <code>for (;;)</code> n'est pas très lisible et n'indique pas clairement qu'il s'agit d'une boucle inconditionnelle. </para>
+</consigne>
+
+<subsubtitle>Instructions conditionnelles</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>Les expressions conditionnelles complexes doivent être évitées.  Introduire plutôt des variables booléennes temporaires [1]. </description>
+<exemple>
+	bool estFini = (noElement &lt; 0) || (noElement &gt; maxElement); 
+	bool estEntreeRepetee = (noElement == dernierElement); 
+	if (estFini || estEntreeRepetee)
+		... 
+
+	// À ÉVITER:
+	if ((noElement &lt; 0) || (noElement &gt;  maxElement)
+	    || noElement == dernierElement)
+		... 
+</exemple>
+<para>En assignant les expressions à des variables booléennes, le programme obtient de la documentation automatiquement.  La condition sera plus facile à lire, à déboguer (possibilité de voir la valeur de chacun des tests individuellement) et à maintenir. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="99">
+<description>Le cas le plus fréquent d'une construction  <code>if</code> devrait être mis dans la partie  <code>if-then</code> et l'exception dans la partie  <code>else</code>.</description>
+<exemple>
+	bool estOk = lireFichier(nomFichier);
+	if (estOk) {
+		...
+	}
+	else {
+		...
+	}
+</exemple>
+<para>Cette norme sert à s'assurer que les cas d'exceptions (c'est-à-dire les moins fréqents, pas ceux attrapés par un <code>catch</code>) n'entravent pas la lisibilité du programme.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Le code conditionnel devrait être mis sur une ligne distincte. </description>
+<exemple>
+   if (estFini)       // À ÉVITER: if (estFini) faireMenage(); 
+      faireMenage(); 
+</exemple>
+<para>Cette règle facilite principalement le déboguage.  Lorsque le code conditionnel est écrit sur une seul ligne, il n'est pas évident de mettre un point d'arrêt sur la réussite du test.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Des énoncés qui exécutent du traitement ne doivent pas se trouver à l'intérieur de conditions. </description>
+<exemple>
+	File* fileHandle = open(fileName, "w");
+	if (fileHandle != 0)
+		...
+
+	// À ÉVITER:
+	if ((fileHandle = open(fileName, "w")) != 0)
+		...
+</exemple>
+<para>Les constructions conditionnelles contenant des énoncés qui font du traitement sont simplement très difficiles à lire. </para>
+</consigne>
+
+<subsubtitle>Divers</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>L'utilisation de nombres « magiques » dans le code doit être évitée.  Les nombres autres que 0 et 1 peuvent être déclarés comme constantes nommées. </description>
+<exemple>
+	const int VALEUR_MAXIMALE = 15;
+	...
+	if (valeur > VALEUR_MAXIMALE)   // À ÉVITER: if (valeur > 15)
+	    erreur();
+</exemple>
+<para>Si le nombre n'a pas une signification évidente de lui-même, la lisibilité est améliorée par l'introduction d'une constante nommée. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les nombres constants à virgule flottante doivent toujours être écrits avec un point décimal et au moins une décimale. </description>
+<exemple>
+	double total   = 0.0;    // À ÉVITER: double total = 0;
+	double vitesse = 3.0e8;  // À ÉVITER: double speed = 3e8;
+	double sum;
+	...
+	sum = (a + b) * 10.0; 
+</exemple>
+<para>Cette norme respecte la nature différente des entiers et des nombres à virgule flottante.  Mathématiquement, les deux modèles sont complètement différents et sont des concepts non compatibles.</para>
+<para>De plus, comme on le voit dans le dernier exemple, cela fait ressortir le type de la variable à laquelle on assigne un nombre, à un point dans le code où le type n'est peut-être pas évident. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les nombres constants à virgule flottante doivent toujours être écrits avec un chiffre avant le point décimal. </description>
+<exemple>
+	double total = 0.5;     // À ÉVITER: double total = .5; 
+</exemple>
+<para>Le système de nombres et d'expressions de C++ est emprunté des mathématiques et on devrait adhérer autant que possible aux conventions mathématiques.  De plus, 0.5 est plus lisible que .5; il est beaucoup plus difficile de confondre 0.5 avec l'entier 5. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="99">
+<description>Les fonctions doivent toujours mentionner le type de la valeur de retour de manière explicite. </description>
+<exemple>
+	int obtenirValeur() // À ÉVITER: obtenirValeur()
+	{
+		...
+	} 
+</exemple>
+<para>Lorsque le type n'est pas mentionné, le C++ a implicitement le type int pour la valeur de retour des fonctions.  Un programmeur ne devrait jamais en dépendre, car cela peut ne pas être clair pour les programmeurs ignorant ce fait. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description> <code>goto</code> ne devrait pas être utilisé. </description>
+<para>L'énoncé <code>goto</code> viole l'idée de la programmation structure.  <code>goto</code> ne devrait être considéré que dans très peu de cas (par exemple, pour sortir d'une structure profondément imbriquée, ou pour le traitement d'exceptions lorsqu'on ne peut utiliser <code>try/catch</code>) et seulement si l'équivalent structuré est moins lisible. </para>
+</consigne>
+
+
+<consigne montrer="non" niveau="1"><!-- TODO: devrait montrer ceci, mais il faut changer toutes les numéros dans toutes les références au guide de codage -->
+<description>"nullptr" devrait être utilisé plutôt que "0" ou "NULL". </description>
+<para>0 n'indique pas bien le type, alors que NULL fait partie du standard C mais est obsolète en C++11.</para>
+</consigne>
+
+
+<subtitle>Disposition et commentaires </subtitle>
+<subsubtitle>Disposition</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>L'indentation de base devrait être de 1 « tab » (d'une taille ajustée entre 2 et 4 espaces). </description>
+<exemple>
+	for (i = 0; i &lt; nElements; i++)
+		a[i] = 0; 
+</exemple>
+<para>L'indentation est utilisée pour mettre en relief la structure logique du code.  L'utilisation du « tab » simplifie l'écriture du programme et aide l'uniformité (impossible de mettre un demi « tab »). Les éditeurs de code permettent généralement de choisir la taile du « tab », 1 espace est trop petite pour bien mettre en évidence la structure, et plus de 4 rend le code très imbriqué difficile à lire et augmente la probabilité de la nécessité de couper des lignes.  La taille d'indentation de 4 est la valeur par défaut dans plusieurs éditeurs, dont VisualStudio.</para>
+</consigne>
+
+
+
+<consigne montrer="ok" niveau="1">
+<description>La disposition des blocs doit être telle qu'illustrée dans les exemples 1 et 2 plus bas, et ne doit pas être comme l'exemple 3.  Les blocs des déclarations de classes, d'interfaces et de méthodes devraient utiliser la disposition de l'exemple 2. </description>
+<para>Exemple 1</para>
+<exemple>
+	while (!estTermine) {
+		faireQuelqueChose();
+		estTermine = !aEncoreAFaire();
+	}
+</exemple>
+<para>Exemple 2</para>
+<exemple>
+	while (!estTermine)
+	{
+		faireQuelqueChose();
+		estTermine = !aEncoreAFaire();
+	} 
+</exemple>
+<para>Exemple 3</para>
+<exemple>
+	while (!estTermine)
+	  {
+		faireQuelqueChose();
+		estTermine = !aEncoreAFaire();
+	  } 
+</exemple>
+<para>L'exemple 3 ajoute un niveau d'indentation additionnelle qui ne fait pas ressortir la structure logique aussi bien que les exemples 1 et 2.</para>
+
+<para>La disposition recommandée est celle de l'exemple 1. Quelle que soit la norme que vous adopterez, assurez-vous de l'utiliser de manière homogène dans tout le code.</para>
+
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les déclarations de classes doivent avoir la forme suivante : </description>
+<exemple>
+	class MaClasse : public ClasseDeBase
+	{
+	public:
+		...
+	protected:
+		...
+	private:
+		...
+	};
+</exemple>
+<para>Cela découle en partie de la règle de la disposition des blocs.</para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>Les définitions de méthodes devraient avoir la forme suivante : </description>
+<exemple>
+	void maMethode()
+	{
+		...
+	} 
+</exemple>
+<para>Cela découle en partie de la règle de la disposition des blocs.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les énoncés de type <code>if-else</code> doivent respecter une des deux normes suivantes : </description>
+
+<para>Style recommandé :</para>
+<exemple>
+	if (condition) { 
+		...
+	} 
+
+	if (condition) { 
+		...
+	}
+	else { 
+		...
+	}
+
+	if (condition) { 
+		...
+	}
+	else if (condition) { 
+		...
+	}
+	else { 
+		...
+	} 
+</exemple>
+
+
+<para>Style alternatif :</para>
+<exemple>
+	if (condition) 
+	{ 
+		...
+	} 
+
+	if (condition) 
+	{ 
+		...
+	}
+	else 
+	{ 
+		...
+	}
+
+	if (condition) 
+	{ 
+		...
+	}
+	else if (condition) 
+	{ 
+		...
+	}
+	else 
+	{ 
+		...
+	} 
+</exemple>
+
+<para>Cela découle en partie de la règle sur la disposition des blocs.  Par contre, on pourrait discuter de la possibilité de mettre une clause  <code>else</code> sur la même ligne que l'accolade fermante de la clause  <code>if</code> ou  <code>else</code> précédent : </para>
+<exemple>
+	if (condition) {
+		...
+	} else {
+		...
+	}
+</exemple>
+<para>L'approche choisie est considérée meilleure, car chaque partie de l'énoncé <code>if-else</code> est écrite sur des lignes différentes du fichier.  Il est donc plus facile de manipuler l'énoncé, par exemple pour déplacer une clause <code>else</code>. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description> L'énoncé  <code>for</code> doit respecter une des deux normes suivantes : </description>
+<para>Style recommandé :</para>
+<exemple>
+	for (initialisation; condition; mise à jour) { 
+		...
+	} 
+</exemple>
+
+<para>Style alternatif :</para>
+<exemple>
+	for (initialisation; condition; mise à jour) 
+	{ 
+		...
+	} 
+</exemple>
+
+<para>Cela découle de la règle de la disposition des blocs. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Un énoncé  <code>for</code> vide devrait avoir la forme suivante : </description>
+<exemple>
+	for (initialization; condition; update) { }
+</exemple>
+<para>Cela met en évidence le fait que l'énoncé est vide et que cela est intentionnel. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>L'énoncé  <code>while</code> doit respecter une des deux normes suivantes : </description>
+<para>Style recommandé :</para>
+<exemple>
+	while (condition) { 
+		...
+	} 
+</exemple>
+<para>Style alternatif :</para>
+<exemple>
+	while (condition) 
+	{ 
+		...
+	} 
+</exemple>
+<para>Cela découle de la règle de la disposition des blocs. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>L'énoncé  <code>do-while</code> doit respecter une des deux normes suivantes : </description>
+<para>Style recommandé :</para>
+<exemple>
+	do { 
+		...
+	} while (condition);
+</exemple>
+<para>Style alternatif :</para>
+<exemple>
+	do 
+	{ 
+		...
+	} 
+	while (condition);
+</exemple>
+<para>Cela découle de la règle de la disposition des blocs. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>L'énoncé <code>switch</code> doit respecter une des deux normes suivantes : </description>
+<para>Style recommandé :</para>
+<exemple>
+	switch (condition) {
+		case ABC :
+			...
+			// Fallthrough
+
+		case DEF :
+			...
+			break;
+
+		case XYZ :
+			...
+			break;
+
+		default :
+			 ...
+			break; 
+	} 
+</exemple>
+<para>Style alternatif :</para>
+<exemple>
+	switch (condition) 
+	{
+		case ABC : 
+			...
+			// Fallthrough 
+
+		case DEF : 
+			...
+			break; 
+
+		case XYZ : 
+			...
+			break; 
+
+		default : 
+			...
+			break; 
+	} 
+</exemple>
+<para>Chaque mot-clé case est indenté par rapport à l'énoncé <code>switch</code> lui-même.  Cela fait ressortir davantage l'énoncé <code>switch</code>.  À noter également l'espace supplémentaire avant le caractère ':'.  Le commentaire « Fallthrough » explicite devrait être ajouté chaque fois qu'un énoncé  <code>case</code> n'a pas d'énoncé <code>break</code>.  L'oubli de l'énoncé <code>break</code> est une erreur commune, alors on doit indiquer clairement qu'il est intentionnel de ne pas en avoir dans certains cas. </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="2">
+<description>Un énoncé  <code>try-catch</code> doit respecter une des deux normes suivantes : </description>
+<para>Style recommandé :</para>
+<exemple>
+	try {
+		...
+	}
+	catch (Exception&amp; exception) {
+		...
+	} 
+</exemple>
+<para>Style alternatif :</para>
+<exemple>
+	try 
+	{
+		...
+	}
+	catch (Exception&amp; exception) 
+	{
+		...
+	} 
+</exemple>
+<para>Cela découle partiellement de la règle de la disposition des blocs.  La discussion sur les accolades fermantes pour <code>if-else</code> s'applique aussi aux énoncés <code>try-catch</code>. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Un énoncé <code>if-else</code>, <code>for</code> ou <code>while</code> simple peut être écrit sans accolades. </description>
+<exemple>
+	if (condition)
+		...
+ 
+	while (condition)
+		... 
+
+	for (initialisation; condition; mise à jour)
+		... 
+</exemple>
+<para>On recommande souvent de toujours utiliser des accolades dans ces cas.  Par contre, les accolades sont généralement un élément du langage qui groupe plusieurs énoncés.  Elles sont donc, par définition, superflues autour d'un seul énoncé.  Un argument courant contre cette syntaxe est que l'ajout d'un énoncé additionnel va briser le code si on ne rajoute pas également les accolades.  En général, par contre, le code ne devrait jamais être écrit en vue de changements qui pourraient arriver. </para>
+</consigne>
+
+
+<consigne montrer="non">
+<description>Le type de la valeur de retour de la fonction peut être mis dans la colonne de gauche au-dessus du nom de la fonction. </description>
+<exemple>
+	void
+	MaClasse::maMethode(void)
+	{
+		...
+	} 
+</exemple>
+<para>Cela facilite le repérage des noms de fonction à l'intérieur d'un fichier, car ils commencent tous dans la première colonne. </para>
+</consigne>
+
+
+
+<subsubtitle>Espaces blancs</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>
+<p>Les opérateurs conventionnels doivent être encadrés d'espaces.</p> 
+<p>Les mots réservés de C++ doivent être suivis d'une espace. </p> 
+<p>Les virgules doivent toujours être suivies d'une espace.  </p> 
+<p>Les deux points (:) doivent être encadrés d'espaces. </p> 
+<p>Les points-virgules (;) des énoncés for doivent être suivi d'une espace.</p> 
+</description>
+
+<exemple>
+	a = (b + c) * d;                        // À ÉVITER: a=(b+c)*d
+
+	while (true) {                          // À ÉVITER: while(true){ 
+		... 
+
+	faireQuelqueChose(a, b, c, d);          // À ÉVITER: faireQuelqueChose(a,b,c,d); 
+
+	case 100 :                              // À ÉVITER: case 100: 
+
+	for (i = 0; i &lt; 10; i++) {              // À ÉVITER: for(i=0;i&lt;10;i++){
+		... 
+</exemple>
+<para>Ceci permet de faire ressortir les composantes individuelles des énoncés et améliore la lisibilité. Il est difficile de donner une liste complète de l'utilisation suggérée des espaces dans le code C++. Les exemples ci-dessus devraient donner une idée générale des intentions. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les noms des méthodes peuvent être suivis d'une espace lorsqu'ils sont suivis d'un autre nom. </description>
+<exemple>
+	faireQuelqueChose (fichierCourant); 
+</exemple>
+<para>Met en relief les noms. Améliore la lisibilité. Lorsqu'une méthode n'est pas suivie d'un autre nom, l'espace peut être omis (faireQuelqueChose()), car il n'y a aucun doute sur le nom dans ce cas. </para>
+<para>Une alternative à cette approche est d'ajouter un espace après la parenthèse d'ouverture. Ceux qui adhèrent à cette approche laissent en général un espace avant la parenthèse de fermeture : <code>faireQuelqueChose( fichierCourant );</code>. Ceci fait ressortir les noms individuels, mais l'espace avant la parenthèse de fermeture est artificiel, et sans cet espace, l'énoncé semble plutôt asymétrique (<code>faireQuelqueChose( fichierCourant);</code>). </para>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Les unités logiques à l'intérieur d'un bloc devraient être séparées par une ligne vide. </description>
+<exemple>
+	// Create a new identity matrix
+	Matrix4x4 matrix;
+
+	// Precompute angles for efficiency 
+	double cosAngle = cos(angle); 
+	double sinAngle = sin(angle); 
+
+	// Specify matrix as a rotation transformation 
+	matrix.setElement(1, 1,  cosAngle); 
+	matrix.setElement(1, 2,  sinAngle); 
+	matrix.setElement(2, 1, -sinAngle); 
+	matrix.setElement(2, 2,  cosAngle); 
+
+	// Apply rotation 
+   transformation.multiply(matrix); 
+</exemple>
+<para>Augmente la lisibilité en ajoutant de l'espace blanc entre les unités logiques.  Chaque unité est souvent introduite par un commentaire comme on le voit dans l'exemple ci-dessus. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="2">
+<description>Les méthodes devraient être séparées les unes des autres par deux ou trois lignes vides. </description>
+<para>En séparant les méthodes d'un espace plus grand que celui utilisé à l'intérieur de celle-ci, les méthodes sont faciles à distinguer à l'intérieur de la classe.</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les variables peuvent être alignées sur la gauche dans les déclarations. </description>
+<exemple>
+	AsciiFile* fichier;
+	int        nPoints;
+	double     x, y; 
+</exemple>
+<para>Améliore la lisibilité.  Les variables sont plus faciles à localiser à partir des types à cause de l'alignement. (Des espaces sont utilisés pour l'alignement, et non des « tab », pour s'assurer que l'alignement est bon quel que soit la taille du « tab ».)</para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les énoncés devraient être alignés partout où cela améliore la lisibilité. </description>
+<exemple>
+	if       (a == lowValue)        computeSomething(); 
+	else if  (a == mediumValue)     computeSomethingElse(); 
+	else if  (a == highValue)       computeSomethingElseYet(); 
+
+	value =  ( potential        * oilDensity )   / constant1 + 
+	         ( depth            * waterDensity ) / constant2 + 
+	         ( zCoordinateValue * gasDensity )   / constant3; 
+
+	minPosition     = computeDistance(min,     x, y, z); 
+	averagePosition = computeDistance(average, x, y, z); 
+
+	switch (phase) { 
+		case PHASE_OIL   : text = "Oil";   break;
+		case PHASE_WATER : text = "Water"; break;
+		case PHASE_GAS   : text = "Gas";   break;
+	} 
+</exemple>
+<para>Il existe de nombreux cas pour lesquels de l'espace blanc peut être ajouté pour augmenter la lisibilité, même si cela va à l'encontre des recommandations.  L'alignement a à voir avec beaucoup de ces cas.  Il est difficile de donner des règles générales pour l'alignement de code, mais les exemples ci-haut devraient fournir l'idée générale.  En bref, n'importe quelle construction qui augmente la lisibilité devrait être permise. </para>
+</consigne>
+
+<subsubtitle>Commentaires</subsubtitle>
+
+<consigne montrer="ok" niveau="1">
+<description>Le code difficile à comprendre ne devrait pas être commenté, mais bien réécrit [1]. </description>
+<para>En général, l'utilisation des commentaires devrait être minimisée en rendant le code auto-documenté, grâce à des choix de noms judicieux et une structure logique explicite.</para>
+<para>Les fonctions courtes, avec des noms clairs, simplifient généralement la lecture. Par exemple, utiliser </para>
+<exemple>
+	if (estPair(x))
+		...
+</exemple>
+<para>en définissant une fonction 'estPair' qui ne fera qu'une seule ligne, plutôt que</para>
+<exemple>
+	if ((x &amp; 1) == 0) // Si x est pair.
+		...
+</exemple>
+</consigne>
+
+
+<consigne montrer="ok" niveau="1">
+<description>Tous les commentaires devraient être écrits en anglais ou en français. </description>
+<para>Dans un environnement international, l'anglais est la langue de choix. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Préférer <code>//</code> pour tous les commentaires, même pour les commentaires de plus d'une ligne. </description>
+<exemple>
+   // Commentaire sur plus
+   // d'une seule ligne. 
+</exemple>
+<para>L'utilisation des commentaires <code>//</code> assure qu'il est toujours possible de commenter une section d'un fichier en utilisant <code>/* */</code>, par exemple pour déboguer un problème, etc.</para>
+<para>Il devrait toujours y avoir un espace entre le <code>//</code> et le commentaire.  De plus, les commentaires devraient toujours commencer par une lettre majuscule et terminer par un point. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les commentaires devraient être indentés selor leur position dans le code [1]. </description>
+<exemple>
+	while (true) {       // À ÉVITER:    while (true) {
+		// Do something  //              // Do something
+		something();     //                  something();
+	}                    //              }
+</exemple>
+<para>Pour éviter que les commentaires ne brisent la structure logique du code. </para>
+</consigne>
+
+<consigne montrer="ok" niveau="1">
+<description>Les commentaires d'entête de <!-- classe et de méthode -->fonctions devraient suivre les conventions JavaDoc.</description>
+<para>La communauté de développement Java est plus mature que celle du C/C++ en ce qui a trait à la documentation standardisée de <!-- classes et de méthodes -->fonctions.  Cela est dû à l'outil standard JavaDoc qui fait partie de la trousse de développement et aide à produire de la documentation hyper-texte à partir de ces commentaires.</para>
+
+<para>Il existe des outils équivalents pour le C++ qui suivent la même syntaxe que JavaDoc.  Voir <a href="http://docpp.sourceforge.net">Doc++</a> ou <a href="http://www.doxygen.org">Doxygen</a> [5] par exemple.</para>
+<para>L'entête pour la fonction 'getline' de la bibliothèque standard C++ pourrait être (si Doxygen est configuré avec JAVADOC_AUTOBRIEF=YES) : </para>
+<exemple>
+/**
+*  Lit une ligne d'un flot et la place dans une chaîne.
+*  \param       is   Le flot d'où la ligne sera extraite.
+*  \param [out] str  La chaîne où sera placée la ligne extraite.
+*  \return  Le flot d'entrée \p is.
+*/
+istream&amp; getline(istream&amp; is, string&amp; str);
+</exemple>
+</consigne>
+
+<subtitle name="references"> Références </subtitle>
+
+
+<para>[0] <i>C++ Programming Style Guidelines</i>, Geotechnical Software Services, <a href="http://geosoft.no/development/cppstyle.html">http://geosoft.no/development/cppstyle.html</a>
+</para>
+<para>[1] Steve McConnel, <i>Code Complete</i>, Microsoft Press </para>
+<para>[2] M. Henricson et E. Nyquist, <i>Programming in C++, Rules and Recommendations</i>, Ellemtel (Swedish telecom) <a href="http://www.doc.ic.ac.uk/lab/cplus/c%2B%2B.rules/">http://www.doc.ic.ac.uk/lab/cplus/c%2b%2b.rules/ </a>
+</para>
+<para>[3] Todd Hoff, <i>C++ Coding Standard</i>, <a href="http://www.possibility.com/Cpp/CppCodingStandard.html">http://www.possibility.com/Cpp/CppCodingStandard.htm </a>
+</para>
+<para>[4] <i>C / C++ / Java Coding Standards from NASA</i> (était à http://v2ma09.gsfc.nasa.gov/coding_standards.html)
+</para>
+<para>[5] Dimitri van Heesch, <i>Doxygen documentation system</i>, <a href="http://www.doxygen.org">http://www.doxygen.org </a>
+</para>
+<para>[6] Keith Gabryelski, <i>Wildfire C++ Programming Style</i>, Wildfire Communications Inc. <a href="http://www.literateprogramming.com/wildfire.pdf">http://www.literateprogramming.com/wildfire.pdf </a>
+</para>
+
+</guide>
